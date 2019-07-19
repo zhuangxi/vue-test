@@ -64,6 +64,11 @@ export default new Router({
           component: ()=>import('@/components/echarts/demo03')
         }
       ]
+    },
+    {
+      path: '/inOut',
+      name: 'inOut',
+      component: ()=>import('@/components/inOut')
     }
   ]
 })

@@ -10,7 +10,7 @@ export default {
     },
     methods: {
         chartInit(){
-            // var mtChart = this.$echarts.
+            var myChart = this.$echarts.init(tis.$refs.myChart)
         }
     }
 }
