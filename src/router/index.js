@@ -69,6 +69,11 @@ export default new Router({
       path: '/inOut',
       name: 'inOut',
       component: ()=>import('@/components/inOut')
+    },
+    {
+      path: '/dialog',
+      name: 'dialog',
+      component: ()=>import('@/components/dialog')
     }
   ]
 })

@@ -123,14 +123,7 @@ export default {
                 let count = 1
                 for(var key in outdata[i]){
                     obj['column' + count] = outdata[i][key]
-                    count++
-                    // if(key == '工号'){
-                    //     obj['jobNumber'] = outdata[i][key]
-                    // }else if(key == '姓名'){
-                    //     obj['name'] = outdata[i][key]
-                    // }else if(key == '部门'){
-                    //     obj['department'] = outdata[i][key]
-                    // }
+                    count ++
                 }
                 list.push(obj)
             }
@@ -140,6 +133,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped style="stylesheet/scss">
+.wrap{
+    header{
+        text-align: left
+    }
+    .export{
+        text-align: left
+    }
+}
 </style>
