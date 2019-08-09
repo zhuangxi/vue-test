@@ -2,7 +2,7 @@
     <div class="wrap">
         <header>导入导出demo</header>
         <div class="export">
-            <input type="button" value="导出" @click="exportExcel" />
+            <input type="button" value="导出" @click="testfunc" />
             <input ref="inputer" id="upload" type="file" @change="importExcel"  value="导入"
              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
         </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx'
 export default {
     name: 'inOut',
     data() {
@@ -24,21 +25,6 @@ export default {
             　　　　"name": "张三",
             　　　　"jobNumber": "1001",
             　　　　"department": "技术部"
-            　　},
-            　　{
-            　　　　"name": "李四",
-            　　　　"jobNumber": "1002",
-            　　　　"department": "技术部"
-            　　},
-            　　{
-            　　　　"name": "王五",
-            　　　　"jobNumber": "1003",
-            　　　　"department": "销售部"
-            　　},
-            　　{
-            　　　　"name": "赵六",
-            　　　　"jobNumber": "1004",
-            　　　　"department": "财务部"
             　　}
             ],
             importData: [],
@@ -47,19 +33,67 @@ export default {
         }
     },
     methods: {
+        testfunc(){
+            var new_ws_name = "SheetJS";
+
+            /* make worksheet */
+            var ws_data = [
+            [ "S", "h", "e", "e", "t", "J", "S" ],
+            [  1 ,  2 ,  3 ,  4 ,  5 ]
+            ];
+            var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+            /* Add the worksheet to the workbook */
+            XLSX.utils.book_append_sheet(wb, ws, ws_name);
+        },
+        outputXlsxFile(data, wscols, xlsxName){ 
+            /* convert state to workbook */ 　　
+            var sheetNames = []; 
+            var sheetsList= {}; 　　
+            for(var key in data){ 　　　　
+            　　sheetNames.push(key); 
+            　　var temp = transferDataExcel(data[key]);//此函数是把数据处理成 [['字段（我是表头1）', '字段（我是表头2）'], ['（表头1对应的内容1）', '（表头1对应的内容2）']['内容1','内容2']...]  　　　　
+            　　sheetsList[key] = XLSX.utils.aoa_to_sheet(temp); 　　　　
+            　　sheetsList[key]['!cols'] = wscols; 　　
+            } 
+            const wb = XLSX.utils.book_new(); 
+            wb['SheetNames']= sheetNames; 
+            wb['Sheets']= sheetsList; 　　
+            XLSX.writeFile(wb, xlsxName + ".xlsx");
+        },
+        transferDataExcel(data){
+            var total = [];
+            var temp = ['功能','功能描述','取值'];
+            total.push(temp);
+            data.forEach(function(item,index){
+                var arr = [];
+                arr.push(item.function_name)
+                arr.push(item.description)
+                arr.push(item.value)
+                total.push(arr);
+            })
+            return total;
+        },
         exportExcel() {　//兼容ie10哦！
         　　require.ensure([], () => {　　　　　　　　
                 const { export_json_to_excel } = require('../excel/Export2Excel');　　//引入文件　　　　　　
-                // const tHeader = ['姓名', '工号', '部门']; //将对应的属性名转换成中文
                 const tHeader = this.colName;　
                 let filterVal = []
                 this.colName.forEach((item, index) => {
                     filterVal.push('column' + (1 + index))
                 })
-                // console.log(filterVal)
-                // const filterVal = ['name', 'jobNumber', 'department'];//table表格中对应的属性名　　　　　 　　　
                 const list = this.importData;　　//想要导出的数据　　　　　　
-                const data = this.formatJson(filterVal, list);　　　　　　　　
+                const data = this.formatJson(filterVal, list);　　　　　　
+                export_json_to_excel(tHeader, data, '列表');
+            })
+        },
+        templateDownload() {　//兼容ie10哦！
+        　　require.ensure([], () => {　　　　　　　　
+                const { export_json_to_excel } = require('../excel/Export2Excel');　　//引入文件　　　　　　
+            　　const tHeader = ['姓名', '工号', '部门']; //将对应的属性名转换成中文
+                const filterVal = ['name', 'jobNumber', 'department'];//table表格中对应的属性名　　　　　 　　　
+                const list = this.exportData;　　//想要导出的数据　　　　　　
+                const data = this.formatJson(filterVal, list);
                 export_json_to_excel(tHeader, data, '列表');
             })
         },
@@ -67,6 +101,7 @@ export default {
             return jsonData.map(v => filterVal.map(j => v[j]));
         },
         importExcel(obj){
+            console.log(obj)
             // this.importData = []
             // this.colName = []
             let _this = this
@@ -87,7 +122,6 @@ export default {
                     for (var i=0; i<length; i++){
                         binary += String.fromCharCode(bytes[i])
                     }
-                    var XLSX = require('xlsx')
                     if(rABS) {
                         wb = XLSX.read(btoa(fixdata(binary)), {
                             type: 'base64'
