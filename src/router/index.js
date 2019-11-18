@@ -62,6 +62,11 @@ export default new Router({
           path: '/echart/demo03',
           name: 'demo03',
           component: ()=>import('@/components/echarts/demo03')
+        },
+        {
+          path: '/echart/demo04',
+          name: 'demo04',
+          component: ()=>import('@/components/echarts/demo04')
         }
       ]
     },
@@ -69,6 +74,21 @@ export default new Router({
       path: '/inOut',
       name: 'inOut',
       component: ()=>import('@/components/inOut')
+    },
+    {
+      path: '/dialog',
+      name: 'dialog',
+      component: ()=>import('@/components/dialog')
+    },
+    {
+      path: '/exportDemo',
+      name: 'exportDemo',
+      component: ()=>import('@/components/exportdemo')
+    },
+    {
+      path: '/countTodemo',
+      name: 'countTodemo',
+      component: ()=>import('@/components/countTodemo')
     }
   ]
 })
